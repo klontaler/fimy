@@ -1,0 +1,34 @@
+.container {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: rgba(231, 42, 42, 0.08);
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    margin: 8px auto;
+    width: 100%;
+}
+
+.income {
+    background-color: rgba(119, 230, 97, 0.08);
+}
+
+.date, .amount, .category {
+    
+}
+
+.amount, .category {
+    text-align: right;
+}
+.date {
+    text-align: left;
+}
+
+.amount {
+
+}
+
+.category {
+
+}
