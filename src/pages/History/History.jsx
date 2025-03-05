@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import TransactionDisplay from "../../components/UI/TransactionDisplay";
 import styles from "./History.module.css"
-import { addTransaction, getTransactions } from "../../api/supabase/transactions";
+import { addTransaction, deleteTransaction, getTransactions } from "../../api/supabase/transactions";
 import Button from "../../components/UI/Button";
 import AddTransaction from './AddTransaction';
+import { getBudget, updateBudget } from "../../api/supabase/budget";
 
 function History() {
   const [transactions, setTransactions] = useState([]);
@@ -35,20 +36,41 @@ function History() {
       description,
     };
 
-    setAmount('');
-    setDate(new Date().toISOString())
-    setDescription('');
-    setType('expense');
+    // чекнуть, нужен ли гетБюджет
+    const cur_budget = await getBudget();
+
+    if (newTransaction.type == 'expense') {
+      await updateBudget(cur_budget.amount - newTransaction.amount);
+    } else if ((newTransaction.type == 'income')) {
+      await updateBudget(cur_budget.amount + newTransaction.amount);
+    }
 
     const addedTransaction = await addTransaction(newTransaction);
 
     setTransactions((prev) => [addedTransaction, ...prev]);
+    
+    setAmount('');
+    setDate(new Date().toISOString())
+    setDescription('');
+    setType('expense');
   }
   
   async function getMore() {
     const data = await getTransactions(i)
     setTransactions([...transactions, ...data]);
     setI(i+10);
+  }
+
+  async function handleDelete(id) {
+    const deleted = await deleteTransaction(id);
+    setTransactions((prev) => prev.filter((item) => item.id != id));
+    const cur = await getBudget();
+
+    if (deleted.type == 'expense') {
+      updateBudget(cur.amount + deleted.amount)
+    } else if (deleted.type == 'income') {
+      updateBudget(cur.amount - deleted.amount)
+    }
   }
 
   return (
@@ -68,20 +90,17 @@ function History() {
 
       <ul className={styles.list}>
         {transactions.map((transaction) => (
-          <>
-          <TransactionDisplay key={transaction.id} k={transaction.id} 
-            date={transaction.date} 
-            amount={transaction.amount} 
-            category={transaction.category} 
-            type={transaction.type}
+          <TransactionDisplay key={transaction.id}
+            transaction={transaction}
+            onDelete={handleDelete}
           />
-          </>
         ))}
       </ul>
 
       <div className={styles.button}>
         <Button onClick={getMore}>Больше</Button>
       </div>
+
     </main>
   );
 }

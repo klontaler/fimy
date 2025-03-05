@@ -3,4 +3,15 @@
     border-radius: 8px;
     border: none;
     font-size: 14px;
+    transition: .2s ease;
+    background-color: #de6274;
+    color: white;
+}
+
+.button:hover {
+    background-color: #cf3b51;
+}
+
+.button:active {
+    background-color: #c32139;
 }

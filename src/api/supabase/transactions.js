@@ -26,3 +26,20 @@ export async function getAllTransactions(id) {
         .eq("user_id", id)
     return data;
 }
+
+export async function deleteTransaction(id) {
+    const {data, error} = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id)
+        .select()
+        .single()
+    return data
+  }
+
+export async function getTranAmount() {
+    const { count, error } = await supabase
+        .from('transactions')
+        .select('*', { count: 'exact', head: true })
+    return count
+}

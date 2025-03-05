@@ -1,11 +1,14 @@
 import styles from "./TransactionDisplay.module.css"
+import Button from "./Button";
 
-export default function TransactionDisplay({k, date, amount, category, type}) {
+export default function TransactionDisplay({transaction, onDelete}) {
+
   return (
-    <li className={[styles.container, type == "income" ? styles.income : ' '].join(' ')} key={k}>
-        <div className={styles.date}>{date}</div>
-        <div className={styles.amount}>{amount} ₽</div>
-        <div className={styles.category}>{category}</div>
+    <li className={[styles.container, transaction.type == "income" ? styles.income : ' '].join(' ')} key={transaction.id}>
+        <div className={styles.date}>{transaction.date}</div>
+        <div className={styles.amount}>{transaction.amount} ₽</div>
+        <div className={styles.category}>{transaction.category}</div>
+        <Button onClick={() => onDelete(transaction.id)}>Удалить</Button>
     </li>
   )
 }
